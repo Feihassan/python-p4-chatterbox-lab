@@ -1,11 +1,15 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_migrate import Migrate
 from models import db, Message
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+CORS(app)
 db.init_app(app)
+migrate = Migrate(app, db)
 
 
 # GET /messages
@@ -46,3 +50,7 @@ def delete_message(id):
     db.session.delete(msg)
     db.session.commit()
     return jsonify({"message": "Deleted successfully"})
+
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
